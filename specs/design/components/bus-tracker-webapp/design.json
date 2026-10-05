@@ -7,11 +7,45 @@
   "appPath": "bus-tracker-webapp",
   "entrypoint": "deployment/web-application",
   "exposure": "internet",
-  "dependencies": [
-    { "kind": "component", "name": "fleet-api" },
-    { "kind": "platform-resource", "name": "user-auth", "resourceType": "thunder-app" }
+  "stories": [
+    "F3.1"
   ],
   "description": "Public, signed-in web app for riders: a live map showing every bus's current position and route, with offline buses shown at their last known position. Reads everything from fleet-api; stores nothing itself. Does not manage fleet data or show device diagnostics — that is fleet-ops-webapp's job.",
-  "stories": ["F3.1"],
-  "skillsPinned": ["wireframes", "react-webapp", "oxygen-ui-design-system", "thunder-authentication"]
+  "dependencies": [
+    {
+      "kind": "component",
+      "name": "fleet-api",
+      "wiring": {
+        "endpoint": {
+          "component": "live-bus-tracking-fleet-api",
+          "name": "http",
+          "visibility": "project",
+          "envBindings": {
+            "address": "FLEET_API_URL"
+          }
+        }
+      }
+    },
+    {
+      "kind": "platform-resource",
+      "name": "user-auth",
+      "resourceType": "thunder-app",
+      "wiring": {
+        "ref": "live-bus-tracking-be28433f",
+        "envBindings": {
+          "client_id": "USER_AUTH_CLIENT_ID",
+          "issuer": "USER_AUTH_ISSUER",
+          "jwks_url": "USER_AUTH_JWKS_URL",
+          "resource": "USER_AUTH_RESOURCE",
+          "scopes": "USER_AUTH_SCOPES"
+        }
+      }
+    }
+  ],
+  "skillsPinned": [
+    "wireframes",
+    "react-webapp",
+    "oxygen-ui-design-system",
+    "thunder-authentication"
+  ]
 }

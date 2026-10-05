@@ -7,11 +7,51 @@
   "appPath": "fleet-ops-webapp",
   "entrypoint": "deployment/web-application",
   "exposure": "intranet",
-  "dependencies": [
-    { "kind": "component", "name": "fleet-api" },
-    { "kind": "platform-resource", "name": "user-auth", "resourceType": "thunder-app" }
+  "stories": [
+    "F1.1",
+    "F1.2",
+    "F1.3",
+    "F1.4",
+    "F1.5",
+    "F1.6",
+    "F3.2"
   ],
   "description": "Internal, intranet-only web app for fleet admins and dispatchers: fleet admins register buses, GPS devices, routes and stops; dispatchers watch a live map of the whole fleet with device id and last-update detail. Reads and writes through fleet-api; stores nothing itself.",
-  "stories": ["F1.1", "F1.2", "F1.3", "F1.4", "F1.5", "F1.6", "F3.2"],
-  "skillsPinned": ["wireframes", "react-webapp", "oxygen-ui-design-system", "thunder-authentication"]
+  "dependencies": [
+    {
+      "kind": "component",
+      "name": "fleet-api",
+      "wiring": {
+        "endpoint": {
+          "component": "live-bus-tracking-fleet-api",
+          "name": "http",
+          "visibility": "project",
+          "envBindings": {
+            "address": "FLEET_API_URL"
+          }
+        }
+      }
+    },
+    {
+      "kind": "platform-resource",
+      "name": "user-auth",
+      "resourceType": "thunder-app",
+      "wiring": {
+        "ref": "live-bus-tracking-be28433f",
+        "envBindings": {
+          "client_id": "USER_AUTH_CLIENT_ID",
+          "issuer": "USER_AUTH_ISSUER",
+          "jwks_url": "USER_AUTH_JWKS_URL",
+          "resource": "USER_AUTH_RESOURCE",
+          "scopes": "USER_AUTH_SCOPES"
+        }
+      }
+    }
+  ],
+  "skillsPinned": [
+    "wireframes",
+    "react-webapp",
+    "oxygen-ui-design-system",
+    "thunder-authentication"
+  ]
 }
