@@ -25,7 +25,7 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
     resource function get buses(int 'limit = 20, int offset = 0) returns inline_response_200|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+        return listBusesLogic('limit, offset);
     }
 
     # Every registered GPS device, including its last-update time
@@ -35,7 +35,7 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
     resource function get devices(int 'limit = 20, int offset = 0) returns inline_response_200_2|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+        return listDevicesLogic('limit, offset);
     }
 
     # Every route and its ordered stops
@@ -44,7 +44,7 @@ service http:InterceptableService / on ep0 {
     # http:Ok (A page of routes)
     # http:Unauthorized (not signed in)
     resource function get routes(int 'limit = 20, int offset = 0) returns inline_response_200_1|ErrorUnauthorized|error {
-        return notImplemented();
+        return listRoutesLogic('limit, offset);
     }
 
     # Update a bus's active status or route assignment
@@ -56,7 +56,7 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
     resource function patch buses/[string busId](@http:Payload BusUpdate payload) returns Bus|ErrorBadRequest|ErrorNotFound|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+        return updateBusLogic(busId, payload);
     }
 
     # Reassign a device to a different bus, or mark it active or inactive
@@ -68,7 +68,7 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
     resource function patch devices/[string deviceId](@http:Payload DeviceUpdate payload) returns Device|ErrorBadRequest|ErrorNotFound|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+        return updateDeviceLogic(deviceId, payload);
     }
 
     # Update a route's name or stops
@@ -80,7 +80,7 @@ service http:InterceptableService / on ep0 {
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
     resource function patch routes/[string routeId](@http:Payload NewRoute payload) returns Route|ErrorBadRequest|ErrorNotFound|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+        return updateRouteLogic(routeId, payload);
     }
 
     # Register a bus
@@ -90,8 +90,8 @@ service http:InterceptableService / on ep0 {
     # http:BadRequest (invalid bus)
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
-    resource function post buses(@http:Payload NewBus payload) returns Bus|ErrorBadRequest|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+    resource function post buses(@http:Payload NewBus payload) returns http:Created|ErrorBadRequest|ErrorUnauthorized|ErrorForbidden|error {
+        return registerBusLogic(payload);
     }
 
     # Register a GPS device, issuing its ID and secret, and assign it to a bus
@@ -101,8 +101,8 @@ service http:InterceptableService / on ep0 {
     # http:BadRequest (invalid device)
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
-    resource function post devices(@http:Payload NewDevice payload) returns DeviceCredentials|ErrorBadRequest|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+    resource function post devices(@http:Payload NewDevice payload) returns http:Created|ErrorBadRequest|ErrorUnauthorized|ErrorForbidden|error {
+        return registerDeviceLogic(payload);
     }
 
     resource function post location\-updates(@http:Payload LocationUpdate payload) returns http:Accepted|ErrorBadRequest|ErrorUnauthorized|error {
@@ -116,8 +116,8 @@ service http:InterceptableService / on ep0 {
     # http:BadRequest (invalid route)
     # http:Unauthorized (not signed in)
     # http:Forbidden (missing scope)
-    resource function post routes(@http:Payload NewRoute payload) returns Route|ErrorBadRequest|ErrorUnauthorized|ErrorForbidden|error {
-        return notImplemented();
+    resource function post routes(@http:Payload NewRoute payload) returns http:Created|ErrorBadRequest|ErrorUnauthorized|ErrorForbidden|error {
+        return createRouteLogic(payload);
     }
 }
 
