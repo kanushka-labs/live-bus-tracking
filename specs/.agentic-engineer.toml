@@ -1,0 +1,4 @@
+apiVersion = "agentic-engineer/v1"
+name = "live-bus-tracking"
+createdAt = "2026-10-05T04:19:39Z"
+idea = "lets make live bus tracking system. each bus will have gps and they will send locationdata. we should ahve way to keep and visualize those."
