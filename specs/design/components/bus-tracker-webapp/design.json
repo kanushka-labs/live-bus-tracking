@@ -1,0 +1,17 @@
+{
+  "name": "bus-tracker-webapp",
+  "type": "web-application",
+  "version": "0.1.0",
+  "language": "TypeScript",
+  "buildpack": "docker",
+  "appPath": "bus-tracker-webapp",
+  "entrypoint": "deployment/web-application",
+  "exposure": "internet",
+  "dependencies": [
+    { "kind": "component", "name": "fleet-api" },
+    { "kind": "platform-resource", "name": "user-auth", "resourceType": "thunder-app" }
+  ],
+  "description": "Public, signed-in web app for riders: a live map showing every bus's current position and route, with offline buses shown at their last known position. Reads everything from fleet-api; stores nothing itself. Does not manage fleet data or show device diagnostics — that is fleet-ops-webapp's job.",
+  "stories": ["F3.1"],
+  "skillsPinned": ["wireframes", "react-webapp", "oxygen-ui-design-system", "thunder-authentication"]
+}

@@ -1,0 +1,19 @@
+title Live Bus Tracking
+
+component bus-tracker-webapp as "Bus Tracker" web-application
+component fleet-ops-webapp as "Fleet Ops" web-application
+component fleet-api as "Fleet API" service
+component fleet-db as "Fleet Database" database
+
+east user-auth as "Thunder Auth" identity-server
+
+north -> bus-tracker-webapp
+north -> fleet-api
+west -> fleet-ops-webapp
+
+bus-tracker-webapp -> fleet-api
+fleet-ops-webapp -> fleet-api
+bus-tracker-webapp -> user-auth
+fleet-ops-webapp -> user-auth
+fleet-api -> user-auth
+fleet-api -> fleet-db
