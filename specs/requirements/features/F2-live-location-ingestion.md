@@ -17,3 +17,4 @@ Needs: F1.
 - Each location update carries the bus's position and the time it was taken.
 - A bus is marked offline when no location update has arrived for more than 2 minutes.
 - An update from an unrecognized device ID is rejected with an error; an update from a known but inactive device is also rejected (P4).
+
