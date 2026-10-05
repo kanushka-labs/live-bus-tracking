@@ -16,3 +16,4 @@ Needs: F1, F2.
 
 - An offline bus (per F2) stays on the map, marked offline, at its last known position — for riders and dispatchers alike.
 - Both roles see every bus on one map; only the per-bus detail shown differs — a dispatcher additionally sees device ID and last-update time.
+

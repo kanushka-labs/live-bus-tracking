@@ -12,3 +12,4 @@ Rules that apply to more than one feature.
 ## Decisions
 
 - Only the latest known position per bus is kept; the product keeps no historical trip data (trip history &amp; playback is out of scope).
+
