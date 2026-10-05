@@ -15,30 +15,40 @@
 //   Every gated route is wrapped in <RequireOperation>, with the operation
 //   taken from SCREEN_ROUTES — never typed here.
 //
-// DEVIATION FROM THE PATTERN, and why: App.example.tsx gates NoAccess on
-// `hasScopedReach`, which is false whenever every reachable screen is
-// `loads: null` or `public` — exactly this app's SCREEN_ROUTES today, since
-// issue #4 (this one) ships the shell with no load-bearing screens (#6 adds
-// those). Using `hasScopedReach` here would send every signed-in caller,
-// FleetAdmin and Dispatcher alike, to NoAccess and the shell would never
-// render — failing this issue's own acceptance ("the shell renders with
-// working navigation"). So this file uses the simpler `reachable.length > 0`
-// instead: any signed-in caller sees the shell, because nothing is gated yet.
-// Once #6 gives a screen a real `loads`, switch this back to `hasScopedReach`
-// so a caller with no Fleet Ops role at all correctly lands on NoAccess.
+// Issue #6 gives Buses, Devices and Routes their first real `loads`, so this
+// file now gates on `hasScopedReach` (a caller with NO Fleet Ops scope at all
+// lands on NoAccess) rather than issue #4's temporary `reachable.length > 0`
+// shortcut, which stood in only while every screen was `loads: null`.
 
 import { useEffect, type ReactElement } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthzProvider, Forbidden, NoAccess, RequireOperation, useAuthz, useScopes } from "./authz/gates";
-import { SCREEN_ROUTES, reachableScreens } from "./authz/screens";
+import { SCREEN_ROUTES, hasScopedReach, reachableScreens } from "./authz/screens";
 import { setForbiddenNavigator } from "./authz/client";
 import { signIn } from "./authz/session";
 import { AppShell } from "./shell/AppShell";
 import { CallbackPage } from "./pages/Callback";
 import { PlaceholderPage } from "./pages/Placeholder";
 import { SettingsPage } from "./pages/Settings";
+import { BusesPage } from "./pages/Buses";
+import { NewBusPage } from "./pages/NewBus";
+import { DevicesPage } from "./pages/Devices";
+import { NewDevicePage } from "./pages/NewDevice";
+import { RoutesPage } from "./pages/Routes";
+import { NewRoutePage } from "./pages/NewRoute";
 
 export const APP_NAME = "Fleet Ops";
+
+/** YOUR pages, keyed by the screen keys src/authz/screens.ts declares. */
+const PAGE_BY_KEY: Record<string, ReactElement> = {
+  fleetmap: <PlaceholderPage title="Fleet map" />,
+  buses: <BusesPage />,
+  newbus: <NewBusPage />,
+  devices: <DevicesPage />,
+  newdevice: <NewDevicePage />,
+  routes: <RoutesPage />,
+  newroute: <NewRoutePage />,
+};
 
 export function App(): ReactElement {
   return (
@@ -91,18 +101,20 @@ function SignedIn(): ReactElement {
 
   const reachable = reachableScreens(scopes, signedIn);
 
-  // See the file comment: `reachable.length === 0` stands in for
-  // `!hasScopedReach` while every screen is `loads: null`.
-  if (reachable.length === 0) return <NoAccess appName={APP_NAME} />;
+  // The NoAccess question: does this caller hold ANY Fleet Ops scope at all?
+  // Not "is `reachable` empty" — FleetMap's `loads: null` would make that true
+  // for any signed-in caller, scoped or not.
+  if (!hasScopedReach(scopes, signedIn)) return <NoAccess appName={APP_NAME} />;
 
-  const landing = reachable[0].path;
+  // Safe: hasScopedReach just proved at least one scope-gated screen is here.
+  const landing = (reachable.find((screen) => !screen.public && screen.loads !== null) ?? reachable[0]).path;
 
   return (
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<Navigate to={landing} replace />} />
         {SCREEN_ROUTES.map((screen) => {
-          const page = <PlaceholderPage title={screen.label} />;
+          const page = PAGE_BY_KEY[screen.key];
           if (screen.loads === null) {
             return <Route key={screen.key} path={screen.path} element={page} />;
           }

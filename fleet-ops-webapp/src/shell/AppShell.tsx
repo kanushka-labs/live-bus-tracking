@@ -37,6 +37,9 @@ export function AppShell(): ReactElement {
   const roles = useHeldRoles();
   const activeItem = SCREEN_ROUTES.find((screen) => screen.path === location.pathname)?.key;
   const roleLabel = roles.length > 0 ? roles.join(", ") : undefined;
+  // Only the wireframes' sidebar items — the "New…" form screens are reached
+  // by a button from their list screen, never from the rail.
+  const navItems = SCREEN_ROUTES.filter((screen) => screen.sidebar);
 
   return (
     <OxygenAppShell>
@@ -68,7 +71,7 @@ export function AppShell(): ReactElement {
         <Sidebar activeItem={activeItem}>
           <Sidebar.Nav>
             <Sidebar.Category>
-              {SCREEN_ROUTES.map((screen) => (
+              {navItems.map((screen) => (
                 <Sidebar.Item key={screen.key} id={screen.key} link={<RouterLink to={screen.path} />}>
                   <Sidebar.ItemIcon>{ICON_BY_KEY[screen.key]}</Sidebar.ItemIcon>
                   <Sidebar.ItemLabel>{screen.label}</Sidebar.ItemLabel>

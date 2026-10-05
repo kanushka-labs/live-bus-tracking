@@ -2,16 +2,17 @@
 // it says about each one is which API operation it LOADS; the gate follows
 // from the contract, projected into ./operations.gen.ts.
 //
-// Issue #4 (this one) is the app shell only — Fleet map, Buses, Devices and
-// Routes are the wireframes' sidebar items (wireframes.dsl), but the screens
-// behind them (issue #6) do not exist yet, so there is no API call for any of
-// them to load. Every row below is therefore `loads: null`: reachable by any
-// signed-in caller, gating on nothing. That is a deliberate, temporary fact —
-// re-derive each `loads` once #6 lands its screens and swap it to the
-// operation the screen actually loads (e.g. "GET /buses" for Buses).
+// Issue #6 gives Buses, Devices and Routes (and their "New…" forms) their
+// first real `loads` values. Fleet map (FleetMap/F3) is a different
+// milestone's screen — it stays `loads: null`, reachable by any signed-in
+// caller but gating nothing, until F3 lands it.
 //
-// RAIL ORDER matches the wireframes' shared sidebar string: "Fleet map ->
-// FleetMap | Buses -> Buses | Devices -> Devices | Routes -> Routes".
+// RAIL ORDER matches the wireframes' screen declaration order (also the
+// shared sidebar string: "Fleet map -> FleetMap | Buses -> Buses | Devices ->
+// Devices | Routes -> Routes"). The three "New…" form screens are reached by
+// a button from their list screen, not from the sidebar, so each carries no
+// `sidebar` flag; `sidebar: true` marks the four rail items the wireframe's
+// `sidebar` line actually draws.
 
 import { canCall } from "./core";
 import { OPERATIONS, isOperationKey, type OperationKey } from "./operations.gen";
@@ -22,13 +23,21 @@ export interface ScreenRoute {
   readonly path: string;
   readonly loads: OperationKey | null;
   readonly public?: boolean;
+  /** Shown as its own item in the app shell's sidebar rail. */
+  readonly sidebar?: boolean;
 }
 
 export const SCREEN_ROUTES: readonly ScreenRoute[] = [
-  { key: "fleetmap", label: "Fleet map", path: "/fleet-map", loads: null },
-  { key: "buses", label: "Buses", path: "/buses", loads: null },
-  { key: "devices", label: "Devices", path: "/devices", loads: null },
-  { key: "routes", label: "Routes", path: "/routes", loads: null },
+  { key: "fleetmap", label: "Fleet map", path: "/fleet-map", loads: null, sidebar: true },
+  { key: "buses", label: "Buses", path: "/buses", loads: "GET /buses", sidebar: true },
+  { key: "newbus", label: "Register bus", path: "/buses/new", loads: "POST /buses" },
+  { key: "devices", label: "Devices", path: "/devices", loads: "GET /devices", sidebar: true },
+  { key: "newdevice", label: "Register device", path: "/devices/new", loads: "POST /devices" },
+  { key: "routes", label: "Routes", path: "/routes", loads: "GET /routes", sidebar: true },
+  // Also serves editing an existing route (?routeId=…), PATCHed with the same
+  // fleet:manage scope as POST /routes — see src/pages/NewRoute.tsx. No
+  // separate "EditRoute" screen exists anywhere, including here.
+  { key: "newroute", label: "Define route", path: "/routes/new", loads: "POST /routes" },
 ];
 
 for (const screen of SCREEN_ROUTES) {
@@ -53,13 +62,9 @@ export function reachableScreens(
 }
 
 /**
- * Does this caller reach anything their scopes actually earned them?
- *
- * Every screen in this table is `loads: null` (see the file comment above), so
- * this is always false today — `reachableScreens` is the question App.tsx asks
- * instead while that holds. Keep this function here, unused, so it is ready the
- * moment #6 gives a screen a real `loads` and this starts meaning something
- * again.
+ * Does this caller reach anything their scopes actually earned them? The
+ * NoAccess question — not "is `reachableScreens` empty", since FleetMap's
+ * `loads: null` would make that true for any signed-in caller, scoped or not.
  */
 export function hasScopedReach(scopes: ReadonlySet<string>, signedIn: boolean): boolean {
   return reachableScreens(scopes, signedIn).some((screen) => !screen.public && screen.loads !== null);
