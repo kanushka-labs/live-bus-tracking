@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 3,
+  "name": "Bus Tracker",
+  "entryScreen": "screen.live-map",
+  "roles": [
+    { "id": "Rider", "name": "Rider" }
+  ],
+  "states": [
+    { "id": "state.default", "name": "Default" },
+    { "id": "state.empty", "name": "No buses" },
+    { "id": "state.failed", "name": "Live feed failed" }
+  ],
+  "screens": [
+    { "id": "screen.live-map", "name": "Live map", "roleIds": ["Rider"] },
+    { "id": "screen.account", "name": "Account", "roleIds": ["Rider"] },
+    { "id": "screen.settings", "name": "Settings", "roleIds": ["Rider"] },
+    { "id": "screen.signed-out", "name": "Signed out", "roleIds": ["Rider"] }
+  ],
+  "flows": [
+    { "id": "flow.track-buses", "name": "Track buses", "roleId": "Rider",
+      "screenIds": ["screen.live-map"] }
+  ]
+}

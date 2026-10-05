@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 3,
+  "name": "Fleet Ops",
+  "entryScreen": "screen.fleet-map",
+  "roles": [
+    { "id": "FleetAdmin", "name": "Fleet Admin" },
+    { "id": "Dispatcher", "name": "Dispatcher" }
+  ],
+  "states": [
+    { "id": "state.default", "name": "Default" },
+    { "id": "state.empty", "name": "Nothing to show" },
+    { "id": "state.validation-error", "name": "Validation errors" },
+    { "id": "state.failed", "name": "Live feed failed" }
+  ],
+  "screens": [
+    { "id": "screen.fleet-map", "name": "Fleet map", "roleIds": ["FleetAdmin", "Dispatcher"] },
+    { "id": "screen.buses", "name": "Buses", "roleIds": ["FleetAdmin"] },
+    { "id": "screen.new-bus", "name": "Register bus", "roleIds": ["FleetAdmin"] },
+    { "id": "screen.devices", "name": "Devices", "roleIds": ["FleetAdmin"] },
+    { "id": "screen.new-device", "name": "Register device", "roleIds": ["FleetAdmin"] },
+    { "id": "screen.routes", "name": "Routes", "roleIds": ["FleetAdmin"] },
+    { "id": "screen.new-route", "name": "Define route", "roleIds": ["FleetAdmin"] },
+    { "id": "screen.account", "name": "Account", "roleIds": ["FleetAdmin", "Dispatcher"] },
+    { "id": "screen.settings", "name": "Settings", "roleIds": ["FleetAdmin", "Dispatcher"] },
+    { "id": "screen.signed-out", "name": "Signed out", "roleIds": ["FleetAdmin", "Dispatcher"] }
+  ],
+  "flows": [
+    { "id": "flow.manage-fleet", "name": "Manage fleet", "roleId": "FleetAdmin",
+      "screenIds": ["screen.buses", "screen.new-bus", "screen.devices", "screen.new-device", "screen.routes", "screen.new-route"] },
+    { "id": "flow.monitor-fleet", "name": "Monitor fleet", "roleId": "Dispatcher",
+      "screenIds": ["screen.fleet-map"] }
+  ]
+}
