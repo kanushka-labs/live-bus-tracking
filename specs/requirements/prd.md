@@ -23,6 +23,9 @@ currently are and plan their trip.
 time, watching for delays, deviations or buses that have gone offline.
 - **Fleet Admin**: a signed-in user who registers buses and their GPS
 devices, and defines routes and stops.
+- **GPS Device**: the automated device fitted to a bus that submits its
+location; it authenticates with its own registered credentials, not through
+Thunder sign-in.
 
 ## Features
 
@@ -40,3 +43,4 @@ update-frequency rules that apply across features.
 - ETA / arrival predictions at a stop.
 - Trip history &amp; playback (reporting on past trips).
 - Alerts &amp; notifications (delay or deviation alerts to riders or dispatchers).
+
