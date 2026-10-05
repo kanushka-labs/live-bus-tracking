@@ -18,3 +18,4 @@ on, and define the routes and stops riders and dispatchers see.
 
 - A GPS device's ID and secret/token are generated at registration; the device presents them with every location update (P2).
 - A bus can run only one route at a time; reassigning it to another route replaces the previous assignment.
+
